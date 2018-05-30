@@ -30,11 +30,11 @@ public class RootVerticle extends AbstractVerticle {
 		// 监听并返回
 		router.route("/").handler(routingContext -> {
 			HttpServerResponse response = routingContext.response();
-			response.putHeader("content-type", "text/html");
-			response.end("<h2>Hello from vertx cluster.</h2>");
+			response.putHeader("content-type", "text/html").end("<h2>Hello from vertx cluster.</h2>");
 		});
 
-		// 接收
+		// 正则式拦截网址，
+		// eg： http://localhost:8900/pushservice/aa////appfeedback?lpsst=12
 		router.routeWithRegex("/pushservice/*.*/poll*").handler(routingContext -> {
 			HttpServerResponse response = routingContext.response();
 			boolean hastype = routingContext.request().params().contains("type");
@@ -48,10 +48,8 @@ public class RootVerticle extends AbstractVerticle {
 			} else {
 				//
 			}
-
-			response.putHeader("content-type", "application/json");
-
-			response.end(new JsonObject().put("code", 200).put("status", "ok").toString());
+			response.putHeader("content-type", "application/json")
+					.end(new JsonObject().put("code", 200).put("status", "ok").toString());
 		});
 
 		router.routeWithRegex("/pushservice/*.*/appfeedback*").handler(routingContext -> {
@@ -60,19 +58,17 @@ public class RootVerticle extends AbstractVerticle {
 			System.out.println("lpsst get: " + lpsst);
 			String body = routingContext.getBodyAsString();
 			System.out.println(body);
-			response.putHeader("content-type", "text/html");
-			response.end("<h2>feedback ok!</h2>");
+			response.putHeader("content-type", "text/html").end("<h2>feedback ok!</h2>");
 
 		});
 		router.routeWithRegex("/pushservice/*.*/appinfo*").handler(routingContext -> {
 			HttpServerResponse response = routingContext.response();
-			response.putHeader("content-type", "text/html");
-			response.end("<h2>appinfo ok!</h2>");
-
+			response.putHeader("content-type", "text/html").end("<h2>appinfo ok!</h2>");
 		});
 
+		// ::代表这里是引用router的accept方法
 		server.requestHandler(router::accept);
-		server.listen(config().getInteger("http.port", 8080), result -> {
+		server.listen(config().getInteger("http.port", 8900), result -> {
 			if (result.succeeded()) {
 				future.complete();
 			} else {
@@ -81,4 +77,5 @@ public class RootVerticle extends AbstractVerticle {
 		});
 		log.info("httpserver listenning on port : " + config().getInteger("http.port", 8900));
 	}
+
 }
