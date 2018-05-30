@@ -51,13 +51,13 @@ public class ResourceLoader {
 	}
 
 	public Object getValue(String key, Object type) throws FileNotFoundException, IOException {
-		if (type instanceof Boolean) {
+		if (type == Boolean.class) {
 			return Boolean.parseBoolean(getValue(key));
-		} else if (type instanceof Integer) {
+		} else if (type == Integer.class) {
 			return Integer.parseInt(getValue(key));
-		} else if (type instanceof Long) {
+		} else if (type == Long.class) {
 			return Long.parseLong(getValue(key));
-		} else if (type instanceof Double) {
+		} else if (type == Double.class) {
 			return Double.parseDouble(getValue(key));
 		}
 		return null;
